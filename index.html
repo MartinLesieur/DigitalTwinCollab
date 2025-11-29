@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Jumeau Numérique NOVAPARC">
-    <title>NOVAPARC - Jumeau Numérique Complet</title>
+    <meta name="description" content="Jumeau Numérique NOVAPARC par DigitalTwinCollab">
+    <title>DigitalTwinCollab - Solutions de Jumeaux Numériques</title>
     <style>
         :root {
+            /* Couleurs de l'App NOVAPARC */
             --primary-green: #2ecc71;
             --dark-green: #27ae60;
             --primary-blue: #3498db;
@@ -19,10 +20,145 @@
             --text-color: #333;
             --card-shadow: 0 4px 6px rgba(0,0,0,0.05);
             --border-radius: 12px;
+
+            /* Couleurs de la Présentation DigitalTwinCollab */
+            --dt-bg: #0f172a;
+            --dt-text: #f8fafc;
+            --dt-accent: #38bdf8;
+            --dt-secondary: #1e293b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--light-bg); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+        
+        body { 
+            background-color: var(--light-bg); 
+            color: var(--text-color); 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           STYLES DE LA PAGE DE PRÉSENTATION
+           ========================================= */
+        #presentation-view {
+            background-color: var(--dt-bg);
+            color: var(--dt-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 200; /* Au-dessus de l'app */
+        }
+
+        .dt-nav {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dt-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #fff, var(--dt-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dt-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .dt-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            max-width: 800px;
+            line-height: 1.2;
+        }
+
+        .dt-hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .dt-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dt-bg);
+            background: var(--dt-accent);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .dt-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.6);
+            background: #fff;
+        }
+
+        .dt-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 60px 40px;
+            background: var(--dt-secondary);
+        }
+
+        .dt-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+
+        .dt-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--dt-accent);
+        }
+
+        .dt-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--dt-accent);
+        }
+
+        .dt-footer {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* =========================================
+           STYLES DE L'APP (MODIFIÉS POUR L'INTÉGRATION)
+           ========================================= */
+        #app-view {
+            display: none; /* Caché par défaut */
+            flex-direction: column;
+            min-height: 100vh;
+            animation: fadeInApp 0.5s ease-out;
+        }
+
+        @keyframes fadeInApp {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
         /* --- HEADER --- */
         header {
@@ -33,11 +169,10 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             position: sticky; top: 0; z-index: 100;
         }
-        .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logo span { color: var(--primary-green); }
         .user-profile { display: flex; align-items: center; gap: 15px; cursor: pointer; }
         
-        /* CORRECTION ICI : Classe spécifique pour l'affichage responsive */
         .user-info-desktop {
             text-align: right;
             display: none;
@@ -182,505 +317,544 @@
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            NOVAPARC <span>DIGITAL TWIN</span>
+    <!-- ==================== VUE 1 : PRÉSENTATION (LANDING PAGE) ==================== -->
+    <section id="presentation-view">
+        <nav class="dt-nav">
+            <div class="dt-logo">DigitalTwin<span>Collab</span></div>
+            <button class="dt-btn" onclick="enterApp()" style="padding: 10px 20px; font-size: 0.9rem;">Connexion</button>
+        </nav>
+
+        <div class="dt-hero">
+            <h1>Donnez vie à vos infrastructures</h1>
+            <p>DigitalTwinCollab transforme vos parcs industriels en écosystèmes intelligents, durables et collaboratifs grâce à la technologie du Jumeau Numérique.</p>
+            <button class="dt-btn" onclick="enterApp()">Accéder à la Démo NOVAPARC</button>
         </div>
-        <div class="user-profile" onclick="openModal('profile')">
-            <!-- CORRECTION ICI : Utilisation de la classe CSS au lieu du style inline -->
-            <div class="user-info-desktop">
-                <div style="font-weight: bold;">Admin Parc</div>
-                <div style="font-size: 0.8rem; opacity: 0.8;">Vue Globale</div>
+
+        <div class="dt-features">
+            <div class="dt-card">
+                <div class="dt-icon">⚡</div>
+                <h3>Efficacité Énergétique</h3>
+                <p style="color: #94a3b8;">Surveillez la consommation en temps réel, optimisez les flux et réduisez votre empreinte carbone grâce à nos algorithmes IA.</p>
             </div>
-            <div class="avatar">AD</div>
+            <div class="dt-card">
+                <div class="dt-icon">🤝</div>
+                <h3>Collaboration B2B</h3>
+                <p style="color: #94a3b8;">Connectez les entreprises de votre parc : échange de ressources, marketplace de déchets, et partage de services.</p>
+            </div>
+            <div class="dt-card">
+                <div class="dt-icon">🏙️</div>
+                <h3>Gestion Globale</h3>
+                <p style="color: #94a3b8;">Une vue centralisée pour la maintenance, la sécurité, la mobilité douce et le bien-être des employés.</p>
+            </div>
         </div>
-    </header>
 
-    <nav>
-        <ul class="nav-links">
-            <li class="active" onclick="switchTab('dashboard', this)">Vue Globale</li>
-            <li onclick="switchTab('energy', this)">Énergie & Carbone</li>
-            <li onclick="switchTab('kpi', this)">KPI & ROI</li>
-            <li onclick="switchTab('circular', this)">Économie Circulaire</li>
-            <li onclick="switchTab('partnerships', this)">Partenariats & Avantages</li>
-            <li onclick="switchTab('mobility', this)">Mobilité Douce</li>
-            <li onclick="switchTab('food', this)">Cantine & Potager</li>
-            <li onclick="switchTab('community', this)">Communauté B2B</li>
-        </ul>
-    </nav>
+        <div class="dt-footer">
+            &copy; 2023 DigitalTwinCollab - L'innovation au service des territoires.
+        </div>
+    </section>
 
-    <main>
-        <!-- ==================== VUE GLOBALE (DASHBOARD) ==================== -->
-        <section id="dashboard" class="view-section active grid-dashboard">
-            <div class="card" style="border-top: 4px solid var(--primary-green);">
-                <h3>Performance Énergétique <span class="card-icon">⚡</span></h3>
-                <div class="energy-big-number" style="color: var(--primary-green);">92%</div>
-                <p style="color: #7f8c8d;">Efficacité globale du parc</p>
-                <div style="margin-top: 15px; font-size: 0.9rem;">
-                    <span style="color: var(--primary-green);">▲ +5%</span> Production solaire vs hier
+
+    <!-- ==================== VUE 2 : APPLICATION NOVAPARC ==================== -->
+    <div id="app-view">
+        <header>
+            <div class="logo" onclick="exitApp()" title="Retour à l'accueil">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                NOVAPARC <span>DIGITAL TWIN</span>
+            </div>
+            <div class="user-profile" onclick="openModal('profile')">
+                <div class="user-info-desktop">
+                    <div style="font-weight: bold;">Admin Parc</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Vue Globale</div>
                 </div>
-                <button class="btn btn-outline" onclick="switchTab('energy', document.querySelectorAll('.nav-links li')[1])">Voir détails</button>
+                <div class="avatar">AD</div>
             </div>
+        </header>
 
-            <div class="card" style="border-top: 4px solid #f1c40f;">
-                <h3>Valorisation Déchets <span class="card-icon">♻️</span></h3>
-                <div class="energy-big-number" style="color: #f39c12;">12.5 T</div>
-                <p style="color: #7f8c8d;">Détournés de l'enfouissement ce mois</p>
-                <div class="waste-meter"><div class="waste-fill" style="width: 80%; background: #f1c40f;"></div></div>
-                <button class="btn btn-outline" style="border-color: #f1c40f; color: #f39c12;" onclick="switchTab('circular', document.querySelectorAll('.nav-links li')[3])">Gérer les flux</button>
-            </div>
+        <nav>
+            <ul class="nav-links">
+                <li class="active" onclick="switchTab('dashboard', this)">Vue Globale</li>
+                <li onclick="switchTab('energy', this)">Énergie & Carbone</li>
+                <li onclick="switchTab('kpi', this)">KPI & ROI</li>
+                <li onclick="switchTab('circular', this)">Économie Circulaire</li>
+                <li onclick="switchTab('partnerships', this)">Partenariats & Avantages</li>
+                <li onclick="switchTab('mobility', this)">Mobilité Douce</li>
+                <li onclick="switchTab('food', this)">Cantine & Potager</li>
+                <li onclick="switchTab('community', this)">Communauté B2B</li>
+            </ul>
+        </nav>
 
-            <div class="card" style="border-top: 4px solid var(--primary-blue);">
-                <h3>Mobilité Partagée <span class="card-icon">🚲</span></h3>
-                <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-bottom: 10px;">
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; font-size: 1.2rem;">18</div>
-                        <div style="font-size: 0.8rem; color: #999;">Vélos Dispo</div>
+        <main>
+            <!-- ==================== VUE GLOBALE (DASHBOARD) ==================== -->
+            <section id="dashboard" class="view-section active grid-dashboard">
+                <div class="card" style="border-top: 4px solid var(--primary-green);">
+                    <h3>Performance Énergétique <span class="card-icon">⚡</span></h3>
+                    <div class="energy-big-number" style="color: var(--primary-green);">92%</div>
+                    <p style="color: #7f8c8d;">Efficacité globale du parc</p>
+                    <div style="margin-top: 15px; font-size: 0.9rem;">
+                        <span style="color: var(--primary-green);">▲ +5%</span> Production solaire vs hier
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; font-size: 1.2rem;">5</div>
-                        <div style="font-size: 0.8rem; color: #999;">Bornes Libres</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-weight: bold; font-size: 1.2rem;">3</div>
-                        <div style="font-size: 0.8rem; color: #999;">Navettes/h</div>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="openModal('transport')">Réserver un véhicule</button>
-            </div>
-
-            <div class="card" style="border-top: 4px solid #e74c3c;">
-                <h3>Alertes & Maintenance <span class="card-icon">🔧</span></h3>
-                <ul style="list-style: none; font-size: 0.9rem;">
-                    <li style="padding: 8px 0; border-bottom: 1px solid #eee; color: #e74c3c;">
-                        <strong>⚠️ Fuite d'eau détectée</strong> - Zone C (Bâtiment 4)
-                    </li>
-                    <li style="padding: 8px 0; color: #f39c12;">
-                        <strong>⚠️ Maintenance Bornes</strong> - Prévue demain 10h
-                    </li>
-                </ul>
-                <button class="btn btn-danger" onclick="openModal('incident')">Gérer les incidents</button>
-            </div>
-        </section>
-
-        <!-- ==================== ÉNERGIE & CARBONE ==================== -->
-        <section id="energy" class="view-section grid-energy">
-            <div class="card">
-                <h3>Pilotage Énergétique Temps Réel <span class="card-icon">📊</span></h3>
-                <div class="energy-stat-row">
-                    <div>
-                        <div class="energy-big-number">450 kW</div>
-                        <div class="energy-label">Consommation</div>
-                    </div>
-                    <div>
-                        <div class="energy-big-number" style="color: var(--primary-green);">120 kW</div>
-                        <div class="energy-label">Production Solaire</div>
-                    </div>
-                    <div>
-                        <div class="energy-big-number" style="color: #95a5a6;">330 kW</div>
-                        <div class="energy-label">Réseau (Net)</div>
-                    </div>
-                </div>
-                <div class="graph-placeholder">
-                    <div style="position: absolute; top: 10px; left: 10px; font-size: 0.8rem; color: #999;">kW</div>
-                    <div style="width: 10%; height: 40%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
-                    <div style="width: 10%; height: 55%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
-                    <div style="width: 10%; height: 75%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
-                    <div style="width: 10%; height: 60%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
-                    <div style="width: 10%; height: 90%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
-                    <div style="width: 10%; height: 50%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0; opacity: 0.5;"></div>
-                    <div class="graph-line"></div>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                <div class="card">
-                    <h3>Empreinte Carbone <span class="card-icon">🌱</span></h3>
-                    <div style="text-align: center; padding: 20px 0;">
-                        <div style="font-size: 3rem; font-weight: bold; color: var(--dark-green);">12g</div>
-                        <div style="color: #7f8c8d;">CO2eq / kWh (Moyenne Parc)</div>
-                    </div>
-                    <p style="font-size: 0.9rem; color: #666; text-align: center;">Excellent ! Vous êtes 40% en dessous de la moyenne nationale.</p>
+                    <button class="btn btn-outline" onclick="switchTab('energy', document.querySelectorAll('.nav-links li')[1])">Voir détails</button>
                 </div>
 
-                <div class="card" style="background: #e8f8f5; border: 1px solid var(--primary-green);">
-                    <h3 style="color: var(--dark-green); border-bottom-color: rgba(46, 204, 113, 0.3);">Suggestions IA (Kaizen)</h3>
-                    <ul style="font-size: 0.9rem; color: var(--navy-blue); padding-left: 20px;">
-                        <li style="margin-bottom: 10px;">Réduire CVC Bâtiment B de 1°C (Gain estimé: 400€/mois)</li>
-                        <li>Décaler la recharge des flottes électriques à 14h00 (Pic solaire)</li>
+                <div class="card" style="border-top: 4px solid #f1c40f;">
+                    <h3>Valorisation Déchets <span class="card-icon">♻️</span></h3>
+                    <div class="energy-big-number" style="color: #f39c12;">12.5 T</div>
+                    <p style="color: #7f8c8d;">Détournés de l'enfouissement ce mois</p>
+                    <div class="waste-meter"><div class="waste-fill" style="width: 80%; background: #f1c40f;"></div></div>
+                    <button class="btn btn-outline" style="border-color: #f1c40f; color: #f39c12;" onclick="switchTab('circular', document.querySelectorAll('.nav-links li')[3])">Gérer les flux</button>
+                </div>
+
+                <div class="card" style="border-top: 4px solid var(--primary-blue);">
+                    <h3>Mobilité Partagée <span class="card-icon">🚲</span></h3>
+                    <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-bottom: 10px;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 1.2rem;">18</div>
+                            <div style="font-size: 0.8rem; color: #999;">Vélos Dispo</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 1.2rem;">5</div>
+                            <div style="font-size: 0.8rem; color: #999;">Bornes Libres</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; font-size: 1.2rem;">3</div>
+                            <div style="font-size: 0.8rem; color: #999;">Navettes/h</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('transport')">Réserver un véhicule</button>
+                </div>
+
+                <div class="card" style="border-top: 4px solid #e74c3c;">
+                    <h3>Alertes & Maintenance <span class="card-icon">🔧</span></h3>
+                    <ul style="list-style: none; font-size: 0.9rem;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid #eee; color: #e74c3c;">
+                            <strong>⚠️ Fuite d'eau détectée</strong> - Zone C (Bâtiment 4)
+                        </li>
+                        <li style="padding: 8px 0; color: #f39c12;">
+                            <strong>⚠️ Maintenance Bornes</strong> - Prévue demain 10h
+                        </li>
                     </ul>
-                    <button class="btn btn-primary" style="background: var(--dark-green);" onclick="openModal('ai_optimize')">Appliquer Automatiquement</button>
+                    <button class="btn btn-danger" onclick="openModal('incident')">Gérer les incidents</button>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- ==================== KPI & ROI ==================== -->
-        <section id="kpi" class="view-section grid-kpi">
-            <div class="card">
-                <h3>Économies Financières (YTD) <span class="card-icon">💰</span></h3>
-                <div class="kpi-highlight">
-                    <div style="font-size: 2.5rem;">📉</div>
-                    <div>
-                        <div class="kpi-value">48 250 €</div>
-                        <div class="kpi-sub">Économisés depuis le 1er Janvier</div>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                        <span>Objectif Annuel (60k€)</span>
-                        <span>80%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill" style="width: 80%;"></div>
-                    </div>
-                </div>
-
-                <h4 style="margin-top: 20px; font-size: 1rem; color: var(--navy-blue);">Détail par Poste</h4>
-                <table class="roi-table">
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Gain (€)</th>
-                            <th>% Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Panneaux Solaires</td>
-                            <td class="roi-positive">+ 25 000 €</td>
-                            <td>52%</td>
-                        </tr>
-                        <tr>
-                            <td>Optimisation CVC (IA)</td>
-                            <td class="roi-positive">+ 12 500 €</td>
-                            <td>26%</td>
-                        </tr>
-                        <tr>
-                            <td>Éclairage LED Intelligent</td>
-                            <td class="roi-positive">+ 6 250 €</td>
-                            <td>13%</td>
-                        </tr>
-                        <tr>
-                            <td>Revente Surplus Réseau</td>
-                            <td class="roi-positive">+ 4 500 €</td>
-                            <td>9%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="card">
-                <h3>Comparatif Consommation (N vs N-1) <span class="card-icon">📉</span></h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Comparaison de la consommation électrique (MWh) par rapport à l'année dernière.</p>
-                
-                <div class="bar-chart">
-                    <div class="bar-group">
-                        <div class="bar" style="height: 60%; background: #bdc3c7;"><span class="bar-value">60</span></div>
-                        <div class="bar" style="height: 45%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">45</span></div>
-                        <div class="bar-label">Juin</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar" style="height: 80%; background: #bdc3c7;"><span class="bar-value">80</span></div>
-                        <div class="bar" style="height: 55%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">55</span></div>
-                        <div class="bar-label">Juil</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar" style="height: 75%; background: #bdc3c7;"><span class="bar-value">75</span></div>
-                        <div class="bar" style="height: 50%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">50</span></div>
-                        <div class="bar-label">Août</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar" style="height: 65%; background: #bdc3c7;"><span class="bar-value">65</span></div>
-                        <div class="bar" style="height: 40%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">40</span></div>
-                        <div class="bar-label">Sept</div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 0.8rem;">
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 10px; height: 10px; background: #bdc3c7;"></div> Année N-1</div>
-                    <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 10px; height: 10px; background: var(--primary-green);"></div> Année N (Actuelle)</div>
-                </div>
-
-                <div style="margin-top: 20px; background: #e8f8f5; padding: 15px; border-radius: 8px; text-align: center;">
-                    <div style="font-weight: bold; color: var(--dark-green);">-28% de consommation moyenne</div>
-                    <div style="font-size: 0.8rem; color: #666;">Grâce à l'isolation et au pilotage intelligent.</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== ÉCONOMIE CIRCULAIRE ==================== -->
-        <section id="circular" class="view-section grid-circular">
-            <div class="card" style="grid-column: span 2;">
-                <h3>Marketplace Inter-Entreprises <span class="card-icon">🤝</span></h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" placeholder="Rechercher une ressource (ex: palettes, chaleur...)" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
-                    <button class="btn btn-primary" style="width: auto; margin-top: 0;" onclick="openModal('search')">Chercher</button>
-                </div>
-                
-                <div class="listing-item">
-                    <div>
-                        <div style="font-weight: bold;">Palettes Europe (Standard)</div>
-                        <div style="font-size: 0.8rem; color: #666;">Dispo: 50 unités • Entreprise: LogiTrans</div>
-                    </div>
-                    <span class="listing-tag tag-give">Don</span>
-                </div>
-                <div class="listing-item">
-                    <div>
-                        <div style="font-weight: bold;">Chutes de Cuir Industriel</div>
-                        <div style="font-size: 0.8rem; color: #666;">Dispo: 200 kg • Entreprise: LuxeFab</div>
-                    </div>
-                    <span class="listing-tag tag-sell">0.50€ / kg</span>
-                </div>
-                <button class="btn btn-outline" style="margin-top: 20px;" onclick="openModal('publish_ad')">+ Publier une annonce</button>
-            </div>
-
-            <div class="card">
-                <h3>Mes Statistiques Déchets <span class="card-icon">📈</span></h3>
-                <div style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
-                        <span>Plastique</span> <span>85% Recyclé</span>
-                    </div>
-                    <div class="waste-meter"><div class="waste-fill" style="width: 85%;"></div></div>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
-                        <span>Carton/Papier</span> <span>98% Recyclé</span>
-                    </div>
-                    <div class="waste-meter"><div class="waste-fill" style="width: 98%; background: var(--primary-green);"></div></div>
-                </div>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
-                    <div style="font-size: 0.8rem; color: #666;">Économies générées (YTD)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--navy-blue);">4,250 €</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== PARTENARIATS & AVANTAGES ==================== -->
-        <section id="partnerships" class="view-section grid-circular">
-            <div class="card" style="grid-column: span 2;">
-                <h3>Offres Inter-Entreprises (B2B) <span class="card-icon">🤝</span></h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Profitez de tarifs négociés entre voisins du parc.</p>
-                
-                <!-- B2B Coupon 1 -->
-                <div class="coupon-card">
-                    <div class="discount-badge">-20%</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; color: var(--navy-blue);">Audit Cybersécurité</div>
-                        <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>SecureTech (Bâtiment C)</strong></div>
-                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Valable pour toute première commande.</div>
-                    </div>
-                    <button class="btn btn-outline" style="width: auto; padding: 5px 15px;" onclick="openModal('code_cyber')">Voir Code</button>
-                </div>
-
-                <!-- B2B Coupon 2 -->
-                <div class="coupon-card">
-                    <div class="discount-badge" style="background: var(--primary-green);">GRATUIT</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; color: var(--navy-blue);">1 Mois de Nettoyage Industriel</div>
-                        <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>CleanPro (Bâtiment A)</strong></div>
-                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Pour tout contrat annuel signé avant décembre.</div>
-                    </div>
-                    <button class="btn btn-outline" style="width: auto; padding: 5px 15px; border-color: var(--primary-green); color: var(--primary-green);" onclick="openModal('code_clean')">Voir Code</button>
-                </div>
-
-                <!-- B2B Coupon 3 -->
-                <div class="coupon-card">
-                    <div class="discount-badge" style="background: var(--navy-blue);">-15%</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; color: var(--navy-blue);">Impression Grand Format</div>
-                        <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>PrintCorp (Bâtiment F)</strong></div>
-                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Sur toute la signalétique événementielle.</div>
-                    </div>
-                    <button class="btn btn-outline" style="width: auto; padding: 5px 15px; border-color: var(--navy-blue); color: var(--navy-blue);" onclick="openModal('code_print')">Voir Code</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Cadeaux & Avantages Salariés <span class="card-icon">🎁</span></h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Pour vos employés.</p>
-
-                <!-- Gift 1 -->
-                <div class="gift-card-visual">
-                    <div style="font-weight: bold; font-size: 1.2rem;">Café Offert ☕</div>
-                    <div style="font-size: 0.9rem; opacity: 0.9;">À la cantine centrale</div>
-                    <div style="font-size: 0.8rem; margin-top: 10px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px; display: inline-block;">Il reste 2 jours</div>
-                    <button style="margin-top: 15px; width: 100%; background: white; color: var(--purple); border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;" onclick="openModal('claim_gift')">Activer le cadeau</button>
-                </div>
-
-                <!-- Gift 2 -->
-                <div style="border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                    <div style="font-weight: bold; color: var(--navy-blue);">Salle de Sport "FitParc"</div>
-                    <div style="font-size: 0.9rem; color: var(--primary-green); font-weight: bold;">-50% sur l'abonnement</div>
-                    <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Réservé aux employés du parc.</div>
-                    <button class="btn btn-purple" style="margin-top: 10px; font-size: 0.8rem; padding: 5px;" onclick="openModal('gym_code')">Obtenir le pass</button>
-                </div>
-                
-                <div style="margin-top: 15px; background: #f0f8ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; color: var(--dark-blue);">
-                    🤝 <strong>Parrainage :</strong> Recommandez un client à une entreprise du parc et gagnez des crédits carbone !
-                </div>
-            </div>
-        </section>
-
-        <!-- ==================== MOBILITÉ DOUCE ==================== -->
-        <section id="mobility" class="view-section grid-energy">
-            <div class="card">
-                <h3>Carte du Parc & Véhicules <span class="card-icon">📍</span></h3>
-                <div class="map-full">
-                    <div style="position: absolute; top: 40%; left: 30%; width: 15px; height: 15px; background: var(--primary-green); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); cursor: pointer;" title="Vélo #12" onclick="openModal('transport')"></div>
-                    <div style="position: absolute; top: 60%; left: 70%; width: 15px; height: 15px; background: var(--primary-blue); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); cursor: pointer;" title="Trottinette #05" onclick="openModal('transport')"></div>
-                    <div style="position: absolute; top: 20%; left: 50%; width: 20px; height: 20px; background: #e67e22; border-radius: 4px; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; color: white; font-size: 10px; font-weight: bold;" title="Station de Charge">⚡</div>
-                    <div style="position: absolute; bottom: 20px; left: 20px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                        <div style="font-size: 0.8rem;">🟢 Vélos 🔵 Trottinettes 🟠 Bornes</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Réserver un trajet <span class="card-icon">📱</span></h3>
-                <div class="transport-mode" onclick="openModal('transport')">
-                    <div style="font-size: 1.5rem;">🚲</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold;">Vélo Électrique</div>
-                        <div style="font-size: 0.8rem; color: #666;">Le plus proche: 2 min à pied</div>
-                    </div>
-                    <div class="battery-level"><div class="battery-fill" style="width: 80%;"></div></div>
-                </div>
-                <div class="transport-mode" onclick="openModal('transport')">
-                    <div style="font-size: 1.5rem;">🛴</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold;">Trottinette</div>
-                        <div style="font-size: 0.8rem; color: #666;">Le plus proche: 5 min à pied</div>
-                    </div>
-                    <div class="battery-level"><div class="battery-fill" style="width: 40%; background: #f39c12;"></div></div>
-                </div>
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                <h4>Covoiturage Inter-Parc</h4>
-                <div style="margin-top: 10px; font-size: 0.9rem; padding: 10px; background: #f0f8ff; border-left: 3px solid var(--primary-blue); border-radius: 4px;">
-                    <strong>Beauvais Centre ➔ NOVAPARC</strong><br>
-                    Départ 17h30 • Martin D. (3 places)
-                </div>
-                <button class="btn btn-primary" onclick="openModal('carpool')">Réserver ma place</button>
-            </div>
-        </section>
-
-        <!-- ==================== CANTINE & POTAGER ==================== -->
-        <section id="food" class="view-section grid-energy">
-            <div class="card">
-                <h3>Cantine Connectée <span class="card-icon">🥗</span></h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 6px;">
-                    <div>
-                        <div style="font-weight: bold; color: var(--navy-blue);">Affluence Actuelle</div>
-                        <div style="font-size: 0.8rem; color: var(--primary-green);">Faible (Pas d'attente)</div>
-                    </div>
-                    <div style="font-size: 1.5rem;">🟢</div>
-                </div>
-
-                <div class="menu-card">
-                    <div class="menu-img">🍲</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold;">Plat du Jour : Risotto aux Champignons</div>
-                        <div style="font-size: 0.8rem; color: #666;">Champignons du potager NOVAPARC • Riz Bio</div>
-                        <div style="font-size: 0.8rem; color: var(--primary-green); margin-top: 5px;">Empreinte Carbone: Très Faible (0.4kg CO2)</div>
-                    </div>
-                    <button class="btn btn-primary" style="width: auto;" onclick="openModal('food_order')">Réserver</button>
-                </div>
-
-                <div class="menu-card">
-                    <div class="menu-img">🍰</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold;">Dessert : Tarte aux Pommes</div>
-                        <div style="font-size: 0.8rem; color: #666;">Pommes du verger local</div>
-                    </div>
-                    <button class="btn btn-primary" style="width: auto;" onclick="openModal('food_order')">Réserver</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Potager Connecté (IoT) <span class="card-icon">🥕</span></h3>
-                <p style="font-size: 0.9rem; color: #666;">Données en temps réel des serres du parc.</p>
-                
-                <div class="sensor-grid">
-                    <div class="sensor-box">
-                        <div style="font-size: 0.8rem; color: #7f8c8d;">Humidité Sol</div>
-                        <div class="sensor-val" style="color: var(--primary-blue);">42%</div>
-                        <div style="font-size: 0.7rem;">Optimal</div>
-                    </div>
-                    <div class="sensor-box">
-                        <div style="font-size: 0.8rem; color: #7f8c8d;">Température</div>
-                        <div class="sensor-val" style="color: var(--accent-orange);">22°C</div>
-                        <div style="font-size: 0.7rem;">Serre A</div>
-                    </div>
-                    <div class="sensor-box">
-                        <div style="font-size: 0.8rem; color: #7f8c8d;">Réservoir Eau</div>
-                        <div class="sensor-val" style="color: var(--dark-blue);">85%</div>
-                        <div style="font-size: 0.7rem;">Eau de Pluie</div>
-                    </div>
-                    <div class="sensor-box">
-                        <div style="font-size: 0.8rem; color: #7f8c8d;">Récolte Prévue</div>
-                        <div class="sensor-val" style="color: var(--primary-green);">J-2</div>
-                        <div style="font-size: 0.7rem;">Tomates</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; padding: 10px; background: #e8f8f5; border-radius: 6px; font-size: 0.9rem;">
-                    <strong>♻️ Boucle Fermée :</strong> Le compost de la cantine a fertilisé ce sol hier.
-                </div>
-                <button class="btn btn-outline" style="margin-top: 15px;" onclick="openModal('garden_cam')">Voir Caméra Serre</button>
-            </div>
-        </section>
-
-        <!-- ==================== COMMUNAUTÉ B2B ==================== -->
-        <section id="community" class="view-section grid-circular">
-            <div class="card" style="grid-column: span 2;">
-                <h3>Actualités & Événements <span class="card-icon">📰</span></h3>
-                <div class="news-feed">
-                    <div class="news-item">
-                        <div class="news-date">
-                            <div style="font-size: 1.2rem;">14</div>
-                            <div style="font-size: 0.8rem; text-transform: uppercase;">Oct</div>
+            <!-- ==================== ÉNERGIE & CARBONE ==================== -->
+            <section id="energy" class="view-section grid-energy">
+                <div class="card">
+                    <h3>Pilotage Énergétique Temps Réel <span class="card-icon">📊</span></h3>
+                    <div class="energy-stat-row">
+                        <div>
+                            <div class="energy-big-number">450 kW</div>
+                            <div class="energy-label">Consommation</div>
                         </div>
                         <div>
-                            <h4 style="color: var(--navy-blue);">Inauguration de la nouvelle chaufferie biomasse</h4>
-                            <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Rejoignez-nous pour la visite technique.</p>
-                            <div style="margin-top: 5px; font-size: 0.8rem; color: var(--primary-blue);">14:00 - 16:00 • Hall A</div>
-                        </div>
-                    </div>
-                    <div class="news-item">
-                        <div class="news-date">
-                            <div style="font-size: 1.2rem;">18</div>
-                            <div style="font-size: 0.8rem; text-transform: uppercase;">Oct</div>
+                            <div class="energy-big-number" style="color: var(--primary-green);">120 kW</div>
+                            <div class="energy-label">Production Solaire</div>
                         </div>
                         <div>
-                            <h4 style="color: var(--navy-blue);">Atelier RSE : "Optimiser sa fiscalité verte"</h4>
-                            <p style="font-size: 0.9rem; color: #666;">Animé par le cabinet Deloitte.</p>
+                            <div class="energy-big-number" style="color: #95a5a6;">330 kW</div>
+                            <div class="energy-label">Réseau (Net)</div>
+                        </div>
+                    </div>
+                    <div class="graph-placeholder">
+                        <div style="position: absolute; top: 10px; left: 10px; font-size: 0.8rem; color: #999;">kW</div>
+                        <div style="width: 10%; height: 40%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 10%; height: 55%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 10%; height: 75%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 10%; height: 60%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 10%; height: 90%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 10%; height: 50%; background: var(--primary-blue); margin: 0 5px; border-radius: 4px 4px 0 0; opacity: 0.5;"></div>
+                        <div class="graph-line"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="card">
+                        <h3>Empreinte Carbone <span class="card-icon">🌱</span></h3>
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 3rem; font-weight: bold; color: var(--dark-green);">12g</div>
+                            <div style="color: #7f8c8d;">CO2eq / kWh (Moyenne Parc)</div>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #666; text-align: center;">Excellent ! Vous êtes 40% en dessous de la moyenne nationale.</p>
+                    </div>
+
+                    <div class="card" style="background: #e8f8f5; border: 1px solid var(--primary-green);">
+                        <h3 style="color: var(--dark-green); border-bottom-color: rgba(46, 204, 113, 0.3);">Suggestions IA (Kaizen)</h3>
+                        <ul style="font-size: 0.9rem; color: var(--navy-blue); padding-left: 20px;">
+                            <li style="margin-bottom: 10px;">Réduire CVC Bâtiment B de 1°C (Gain estimé: 400€/mois)</li>
+                            <li>Décaler la recharge des flottes électriques à 14h00 (Pic solaire)</li>
+                        </ul>
+                        <button class="btn btn-primary" style="background: var(--dark-green);" onclick="openModal('ai_optimize')">Appliquer Automatiquement</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== KPI & ROI ==================== -->
+            <section id="kpi" class="view-section grid-kpi">
+                <div class="card">
+                    <h3>Économies Financières (YTD) <span class="card-icon">💰</span></h3>
+                    <div class="kpi-highlight">
+                        <div style="font-size: 2.5rem;">📉</div>
+                        <div>
+                            <div class="kpi-value">48 250 €</div>
+                            <div class="kpi-sub">Économisés depuis le 1er Janvier</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span>Objectif Annuel (60k€)</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 80%;"></div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 20px; font-size: 1rem; color: var(--navy-blue);">Détail par Poste</h4>
+                    <table class="roi-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Gain (€)</th>
+                                <th>% Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Panneaux Solaires</td>
+                                <td class="roi-positive">+ 25 000 €</td>
+                                <td>52%</td>
+                            </tr>
+                            <tr>
+                                <td>Optimisation CVC (IA)</td>
+                                <td class="roi-positive">+ 12 500 €</td>
+                                <td>26%</td>
+                            </tr>
+                            <tr>
+                                <td>Éclairage LED Intelligent</td>
+                                <td class="roi-positive">+ 6 250 €</td>
+                                <td>13%</td>
+                            </tr>
+                            <tr>
+                                <td>Revente Surplus Réseau</td>
+                                <td class="roi-positive">+ 4 500 €</td>
+                                <td>9%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Comparatif Consommation (N vs N-1) <span class="card-icon">📉</span></h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Comparaison de la consommation électrique (MWh) par rapport à l'année dernière.</p>
+                    
+                    <div class="bar-chart">
+                        <div class="bar-group">
+                            <div class="bar" style="height: 60%; background: #bdc3c7;"><span class="bar-value">60</span></div>
+                            <div class="bar" style="height: 45%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">45</span></div>
+                            <div class="bar-label">Juin</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 80%; background: #bdc3c7;"><span class="bar-value">80</span></div>
+                            <div class="bar" style="height: 55%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">55</span></div>
+                            <div class="bar-label">Juil</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 75%; background: #bdc3c7;"><span class="bar-value">75</span></div>
+                            <div class="bar" style="height: 50%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">50</span></div>
+                            <div class="bar-label">Août</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 65%; background: #bdc3c7;"><span class="bar-value">65</span></div>
+                            <div class="bar" style="height: 40%; background: var(--primary-green); margin-left: -10px; z-index: 2; opacity: 0.9;"><span class="bar-value" style="color:white;">40</span></div>
+                            <div class="bar-label">Sept</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 0.8rem;">
+                        <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 10px; height: 10px; background: #bdc3c7;"></div> Année N-1</div>
+                        <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 10px; height: 10px; background: var(--primary-green);"></div> Année N (Actuelle)</div>
+                    </div>
+
+                    <div style="margin-top: 20px; background: #e8f8f5; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-weight: bold; color: var(--dark-green);">-28% de consommation moyenne</div>
+                        <div style="font-size: 0.8rem; color: #666;">Grâce à l'isolation et au pilotage intelligent.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== ÉCONOMIE CIRCULAIRE ==================== -->
+            <section id="circular" class="view-section grid-circular">
+                <div class="card" style="grid-column: span 2;">
+                    <h3>Marketplace Inter-Entreprises <span class="card-icon">🤝</span></h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" placeholder="Rechercher une ressource (ex: palettes, chaleur...)" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <button class="btn btn-primary" style="width: auto; margin-top: 0;" onclick="openModal('search')">Chercher</button>
+                    </div>
+                    
+                    <div class="listing-item">
+                        <div>
+                            <div style="font-weight: bold;">Palettes Europe (Standard)</div>
+                            <div style="font-size: 0.8rem; color: #666;">Dispo: 50 unités • Entreprise: LogiTrans</div>
+                        </div>
+                        <span class="listing-tag tag-give">Don</span>
+                    </div>
+                    <div class="listing-item">
+                        <div>
+                            <div style="font-weight: bold;">Chutes de Cuir Industriel</div>
+                            <div style="font-size: 0.8rem; color: #666;">Dispo: 200 kg • Entreprise: LuxeFab</div>
+                        </div>
+                        <span class="listing-tag tag-sell">0.50€ / kg</span>
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 20px;" onclick="openModal('publish_ad')">+ Publier une annonce</button>
+                </div>
+
+                <div class="card">
+                    <h3>Mes Statistiques Déchets <span class="card-icon">📈</span></h3>
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span>Plastique</span> <span>85% Recyclé</span>
+                        </div>
+                        <div class="waste-meter"><div class="waste-fill" style="width: 85%;"></div></div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span>Carton/Papier</span> <span>98% Recyclé</span>
+                        </div>
+                        <div class="waste-meter"><div class="waste-fill" style="width: 98%; background: var(--primary-green);"></div></div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.8rem; color: #666;">Économies générées (YTD)</div>
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--navy-blue);">4,250 €</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PARTENARIATS & AVANTAGES ==================== -->
+            <section id="partnerships" class="view-section grid-circular">
+                <div class="card" style="grid-column: span 2;">
+                    <h3>Offres Inter-Entreprises (B2B) <span class="card-icon">🤝</span></h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Profitez de tarifs négociés entre voisins du parc.</p>
+                    
+                    <!-- B2B Coupon 1 -->
+                    <div class="coupon-card">
+                        <div class="discount-badge">-20%</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; color: var(--navy-blue);">Audit Cybersécurité</div>
+                            <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>SecureTech (Bâtiment C)</strong></div>
+                            <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Valable pour toute première commande.</div>
+                        </div>
+                        <button class="btn btn-outline" style="width: auto; padding: 5px 15px;" onclick="openModal('code_cyber')">Voir Code</button>
+                    </div>
+
+                    <!-- B2B Coupon 2 -->
+                    <div class="coupon-card">
+                        <div class="discount-badge" style="background: var(--primary-green);">GRATUIT</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; color: var(--navy-blue);">1 Mois de Nettoyage Industriel</div>
+                            <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>CleanPro (Bâtiment A)</strong></div>
+                            <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Pour tout contrat annuel signé avant décembre.</div>
+                        </div>
+                        <button class="btn btn-outline" style="width: auto; padding: 5px 15px; border-color: var(--primary-green); color: var(--primary-green);" onclick="openModal('code_clean')">Voir Code</button>
+                    </div>
+
+                    <!-- B2B Coupon 3 -->
+                    <div class="coupon-card">
+                        <div class="discount-badge" style="background: var(--navy-blue);">-15%</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; color: var(--navy-blue);">Impression Grand Format</div>
+                            <div style="font-size: 0.85rem; color: #666;">Proposé par : <strong>PrintCorp (Bâtiment F)</strong></div>
+                            <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Sur toute la signalétique événementielle.</div>
+                        </div>
+                        <button class="btn btn-outline" style="width: auto; padding: 5px 15px; border-color: var(--navy-blue); color: var(--navy-blue);" onclick="openModal('code_print')">Voir Code</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Cadeaux & Avantages Salariés <span class="card-icon">🎁</span></h3>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Pour vos employés.</p>
+
+                    <!-- Gift 1 -->
+                    <div class="gift-card-visual">
+                        <div style="font-weight: bold; font-size: 1.2rem;">Café Offert ☕</div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">À la cantine centrale</div>
+                        <div style="font-size: 0.8rem; margin-top: 10px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 4px; display: inline-block;">Il reste 2 jours</div>
+                        <button style="margin-top: 15px; width: 100%; background: white; color: var(--purple); border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold;" onclick="openModal('claim_gift')">Activer le cadeau</button>
+                    </div>
+
+                    <!-- Gift 2 -->
+                    <div style="border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-weight: bold; color: var(--navy-blue);">Salle de Sport "FitParc"</div>
+                        <div style="font-size: 0.9rem; color: var(--primary-green); font-weight: bold;">-50% sur l'abonnement</div>
+                        <div style="font-size: 0.8rem; color: #999; margin-top: 5px;">Réservé aux employés du parc.</div>
+                        <button class="btn btn-purple" style="margin-top: 10px; font-size: 0.8rem; padding: 5px;" onclick="openModal('gym_code')">Obtenir le pass</button>
+                    </div>
+                    
+                    <div style="margin-top: 15px; background: #f0f8ff; padding: 10px; border-radius: 6px; font-size: 0.85rem; text-align: center; color: var(--dark-blue);">
+                        🤝 <strong>Parrainage :</strong> Recommandez un client à une entreprise du parc et gagnez des crédits carbone !
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== MOBILITÉ DOUCE ==================== -->
+            <section id="mobility" class="view-section grid-energy">
+                <div class="card">
+                    <h3>Carte du Parc & Véhicules <span class="card-icon">📍</span></h3>
+                    <div class="map-full">
+                        <div style="position: absolute; top: 40%; left: 30%; width: 15px; height: 15px; background: var(--primary-green); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); cursor: pointer;" title="Vélo #12" onclick="openModal('transport')"></div>
+                        <div style="position: absolute; top: 60%; left: 70%; width: 15px; height: 15px; background: var(--primary-blue); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); cursor: pointer;" title="Trottinette #05" onclick="openModal('transport')"></div>
+                        <div style="position: absolute; top: 20%; left: 50%; width: 20px; height: 20px; background: #e67e22; border-radius: 4px; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; color: white; font-size: 10px; font-weight: bold;" title="Station de Charge">⚡</div>
+                        <div style="position: absolute; bottom: 20px; left: 20px; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <div style="font-size: 0.8rem;">🟢 Vélos 🔵 Trottinettes 🟠 Bornes</div>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-outline" onclick="openModal('calendar')">Voir le calendrier complet</button>
-            </div>
 
-            <div class="card">
-                <h3>Mobilité RH & Services <span class="card-icon">💼</span></h3>
-                <h4 style="font-size: 0.9rem; color: #999; margin-bottom: 10px; text-transform: uppercase;">Opportunités Internes</h4>
-                <div class="job-card">
-                    <div style="font-weight: bold; font-size: 0.95rem;">Responsable Qualité</div>
-                    <div style="font-size: 0.85rem; color: #666;">AgriTech Solutions • CDI</div>
-                    <div style="font-size: 0.8rem; color: var(--primary-blue); margin-top: 5px; cursor: pointer;" onclick="openModal('job_apply')">Voir l'offre →</div>
+                <div class="card">
+                    <h3>Réserver un trajet <span class="card-icon">📱</span></h3>
+                    <div class="transport-mode" onclick="openModal('transport')">
+                        <div style="font-size: 1.5rem;">🚲</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold;">Vélo Électrique</div>
+                            <div style="font-size: 0.8rem; color: #666;">Le plus proche: 2 min à pied</div>
+                        </div>
+                        <div class="battery-level"><div class="battery-fill" style="width: 80%;"></div></div>
+                    </div>
+                    <div class="transport-mode" onclick="openModal('transport')">
+                        <div style="font-size: 1.5rem;">🛴</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold;">Trottinette</div>
+                            <div style="font-size: 0.8rem; color: #666;">Le plus proche: 5 min à pied</div>
+                        </div>
+                        <div class="battery-level"><div class="battery-fill" style="width: 40%; background: #f39c12;"></div></div>
+                    </div>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                    <h4>Covoiturage Inter-Parc</h4>
+                    <div style="margin-top: 10px; font-size: 0.9rem; padding: 10px; background: #f0f8ff; border-left: 3px solid var(--primary-blue); border-radius: 4px;">
+                        <strong>Beauvais Centre ➔ NOVAPARC</strong><br>
+                        Départ 17h30 • Martin D. (3 places)
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('carpool')">Réserver ma place</button>
                 </div>
-                <div class="job-card" style="border-left-color: var(--primary-green);">
-                    <div style="font-weight: bold; font-size: 0.95rem;">Technicien de Maintenance</div>
-                    <div style="font-size: 0.85rem; color: #666;">Poste Partagé (3 entreprises)</div>
-                    <div style="font-size: 0.8rem; color: var(--primary-green); margin-top: 5px; cursor: pointer;" onclick="openModal('job_apply')">Voir l'offre →</div>
+            </section>
+
+            <!-- ==================== CANTINE & POTAGER ==================== -->
+            <section id="food" class="view-section grid-energy">
+                <div class="card">
+                    <h3>Cantine Connectée <span class="card-icon">🥗</span></h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 6px;">
+                        <div>
+                            <div style="font-weight: bold; color: var(--navy-blue);">Affluence Actuelle</div>
+                            <div style="font-size: 0.8rem; color: var(--primary-green);">Faible (Pas d'attente)</div>
+                        </div>
+                        <div style="font-size: 1.5rem;">🟢</div>
+                    </div>
+
+                    <div class="menu-card">
+                        <div class="menu-img">🍲</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold;">Plat du Jour : Risotto aux Champignons</div>
+                            <div style="font-size: 0.8rem; color: #666;">Champignons du potager NOVAPARC • Riz Bio</div>
+                            <div style="font-size: 0.8rem; color: var(--primary-green); margin-top: 5px;">Empreinte Carbone: Très Faible (0.4kg CO2)</div>
+                        </div>
+                        <button class="btn btn-primary" style="width: auto;" onclick="openModal('food_order')">Réserver</button>
+                    </div>
+
+                    <div class="menu-card">
+                        <div class="menu-img">🍰</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold;">Dessert : Tarte aux Pommes</div>
+                            <div style="font-size: 0.8rem; color: #666;">Pommes du verger local</div>
+                        </div>
+                        <button class="btn btn-primary" style="width: auto;" onclick="openModal('food_order')">Réserver</button>
+                    </div>
                 </div>
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-                <h4 style="font-size: 0.9rem; color: #999; margin-bottom: 10px; text-transform: uppercase;">Services Mutualisés</h4>
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 8px; margin-bottom: 5px;" onclick="openModal('room_booking')">🏢 Réserver Salle Conférence</button>
-                <button class="btn btn-outline" style="font-size: 0.9rem; padding: 8px;" onclick="openModal('legal_help')">⚖️ Consultation Juridique</button>
-            </div>
-        </section>
-    </main>
+
+                <div class="card">
+                    <h3>Potager Connecté (IoT) <span class="card-icon">🥕</span></h3>
+                    <p style="font-size: 0.9rem; color: #666;">Données en temps réel des serres du parc.</p>
+                    
+                    <div class="sensor-grid">
+                        <div class="sensor-box">
+                            <div style="font-size: 0.8rem; color: #7f8c8d;">Humidité Sol</div>
+                            <div class="sensor-val" style="color: var(--primary-blue);">42%</div>
+                            <div style="font-size: 0.7rem;">Optimal</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div style="font-size: 0.8rem; color: #7f8c8d;">Température</div>
+                            <div class="sensor-val" style="color: var(--accent-orange);">22°C</div>
+                            <div style="font-size: 0.7rem;">Serre A</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div style="font-size: 0.8rem; color: #7f8c8d;">Réservoir Eau</div>
+                            <div class="sensor-val" style="color: var(--dark-blue);">85%</div>
+                            <div style="font-size: 0.7rem;">Eau de Pluie</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div style="font-size: 0.8rem; color: #7f8c8d;">Récolte Prévue</div>
+                            <div class="sensor-val" style="color: var(--primary-green);">J-2</div>
+                            <div style="font-size: 0.7rem;">Tomates</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 10px; background: #e8f8f5; border-radius: 6px; font-size: 0.9rem;">
+                        <strong>♻️ Boucle Fermée :</strong> Le compost de la cantine a fertilisé ce sol hier.
+                    </div>
+                    <button class="btn btn-outline" style="margin-top: 15px;" onclick="openModal('garden_cam')">Voir Caméra Serre</button>
+                </div>
+            </section>
+
+            <!-- ==================== COMMUNAUTÉ B2B ==================== -->
+            <section id="community" class="view-section grid-circular">
+                <div class="card" style="grid-column: span 2;">
+                    <h3>Actualités & Événements <span class="card-icon">📰</span></h3>
+                    <div class="news-feed">
+                        <div class="news-item">
+                            <div class="news-date">
+                                <div style="font-size: 1.2rem;">14</div>
+                                <div style="font-size: 0.8rem; text-transform: uppercase;">Oct</div>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--navy-blue);">Inauguration de la nouvelle chaufferie biomasse</h4>
+                                <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">Rejoignez-nous pour la visite technique.</p>
+                                <div style="margin-top: 5px; font-size: 0.8rem; color: var(--primary-blue);">14:00 - 16:00 • Hall A</div>
+                            </div>
+                        </div>
+                        <div class="news-item">
+                            <div class="news-date">
+                                <div style="font-size: 1.2rem;">18</div>
+                                <div style="font-size: 0.8rem; text-transform: uppercase;">Oct</div>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--navy-blue);">Atelier RSE : "Optimiser sa fiscalité verte"</h4>
+                                <p style="font-size: 0.9rem; color: #666;">Animé par le cabinet Deloitte.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" onclick="openModal('calendar')">Voir le calendrier complet</button>
+                </div>
+
+                <div class="card">
+                    <h3>Mobilité RH & Services <span class="card-icon">💼</span></h3>
+                    <h4 style="font-size: 0.9rem; color: #999; margin-bottom: 10px; text-transform: uppercase;">Opportunités Internes</h4>
+                    <div class="job-card">
+                        <div style="font-weight: bold; font-size: 0.95rem;">Responsable Qualité</div>
+                        <div style="font-size: 0.85rem; color: #666;">AgriTech Solutions • CDI</div>
+                        <div style="font-size: 0.8rem; color: var(--primary-blue); margin-top: 5px; cursor: pointer;" onclick="openModal('job_apply')">Voir l'offre →</div>
+                    </div>
+                    <div class="job-card" style="border-left-color: var(--primary-green);">
+                        <div style="font-weight: bold; font-size: 0.95rem;">Technicien de Maintenance</div>
+                        <div style="font-size: 0.85rem; color: #666;">Poste Partagé (3 entreprises)</div>
+                        <div style="font-size: 0.8rem; color: var(--primary-green); margin-top: 5px; cursor: pointer;" onclick="openModal('job_apply')">Voir l'offre →</div>
+                    </div>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                    <h4 style="font-size: 0.9rem; color: #999; margin-bottom: 10px; text-transform: uppercase;">Services Mutualisés</h4>
+                    <button class="btn btn-outline" style="font-size: 0.9rem; padding: 8px; margin-bottom: 5px;" onclick="openModal('room_booking')">🏢 Réserver Salle Conférence</button>
+                    <button class="btn btn-outline" style="font-size: 0.9rem; padding: 8px;" onclick="openModal('legal_help')">⚖️ Consultation Juridique</button>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- MODAL OVERLAY -->
     <div id="modal-overlay" class="modal-overlay">
@@ -695,6 +869,19 @@
     </div>
 
     <script>
+        // --- GESTION DE L'AFFICHAGE (Landing vs App) ---
+        function enterApp() {
+            document.getElementById('presentation-view').style.display = 'none';
+            document.getElementById('app-view').style.display = 'flex';
+        }
+
+        function exitApp() {
+            document.getElementById('presentation-view').style.display = 'flex';
+            document.getElementById('app-view').style.display = 'none';
+        }
+
+        // --- LOGIQUE DE L'APP (Existante) ---
+
         // Navigation Logic
         function switchTab(tabId, navElement) {
             document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
@@ -735,6 +922,10 @@
                     break;
 
                 // --- EXISTING MODALS ---
+                case 'profile':
+                    modalHeader.innerText = "Profil Utilisateur";
+                    modalBody.innerHTML = "<p><strong>Nom:</strong> Admin Parc<br><strong>Rôle:</strong> Gestionnaire<br><strong>Email:</strong> admin@novaparc.com</p><button class='btn btn-danger' onclick='exitApp(); closeModal();'>Se déconnecter</button>";
+                    break;
                 case 'incident':
                     modalHeader.innerText = "Signaler / Gérer un Incident";
                     modalBody.innerHTML = "<p>Sélectionnez le type d'incident :</p><select style='width:100%; padding:8px; margin-top:10px;'><option>Fuite d'eau</option><option>Panne Électrique</option><option>Dégradations</option></select><br><br><textarea style='width:100%; height:80px; padding:8px;' placeholder='Description...'></textarea>";
